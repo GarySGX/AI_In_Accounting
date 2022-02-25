@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import request, render_template
 from keras.models import load_model
-
+import joblib
 
 
 app = Flask(__name__)
@@ -26,7 +26,8 @@ def init():
 		loan = request.form.get("loan")
 		print(income, age, loan)
 		model = load_model("model_file")
-		pred = model.predict([[float(age), float(loan)]])
+		transformer = joblib.load('MinMaxScaler')
+		pred = model.predict(transformer.transform([[float(income),float(age), float(loan)]]))
 		print(pred)
 		pred = pred[0][0]
 		s = "Predicted Default is " + str(pred)
